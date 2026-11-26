@@ -1,0 +1,60 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global Catch-all Security Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    match /users/{userId} {
+      allow read: if isSignedIn();
+      allow write: if isOwner(userId);
+    }
+
+    match /accounts/{accountId} {
+      allow read, write: if isSignedIn();
+    }
+
+    match /journalEntries/{entryId} {
+      allow read, write: if isSignedIn();
+    }
+
+    match /suppliers/{supplierId} {
+      allow read, write: if isSignedIn();
+    }
+
+    match /ingredients/{ingredientId} {
+      allow read, write: if isSignedIn();
+    }
+
+    match /menuItems/{menuItemId} {
+      allow read, write: if isSignedIn();
+    }
+
+    match /tables/{tableId} {
+      allow read, write: if isSignedIn();
+    }
+
+    match /orders/{orderId} {
+      allow read, write: if isSignedIn();
+    }
+
+    match /purchaseInvoices/{invoiceId} {
+      allow read, write: if isSignedIn();
+    }
+
+    match /wasteLogs/{wasteId} {
+      allow read, write: if isSignedIn();
+    }
+  }
+}

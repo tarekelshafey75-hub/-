@@ -1,0 +1,203 @@
+{
+  "entities": {
+    "Account": {
+      "title": "Chart of Accounts",
+      "description": "Represents a financial account in the ledger.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "code": { "type": "string" },
+        "type": { "type": "string", "enum": ["Asset", "Liability", "Equity", "Revenue", "Expense"] },
+        "balance": { "type": "number" }
+      },
+      "required": ["name", "code", "type", "balance"]
+    },
+    "JournalEntry": {
+      "title": "Journal Entry",
+      "description": "A double-entry bookkeeping record.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "entryNumber": { "type": "string" },
+        "date": { "type": "string" },
+        "description": { "type": "string" },
+        "reference": { "type": "string" },
+        "lines": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "accountId": { "type": "string" },
+              "accountName": { "type": "string" },
+              "debit": { "type": "number" },
+              "credit": { "type": "number" }
+            }
+          }
+        }
+      },
+      "required": ["entryNumber", "date", "description", "lines"]
+    },
+    "Supplier": {
+      "title": "Supplier",
+      "description": "Ingredient suppliers and vendors.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "contactPerson": { "type": "string" },
+        "phone": { "type": "string" },
+        "email": { "type": "string" },
+        "address": { "type": "string" }
+      },
+      "required": ["name", "contactPerson", "phone", "email"]
+    },
+    "Ingredient": {
+      "title": "Ingredient",
+      "description": "Represents raw materials in food stock.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "unit": { "type": "string" },
+        "currentStock": { "type": "number" },
+        "minStock": { "type": "number" },
+        "costPerUnit": { "type": "number" },
+        "supplierId": { "type": "string" }
+      },
+      "required": ["name", "unit", "currentStock", "minStock", "costPerUnit"]
+    },
+    "MenuItem": {
+      "title": "Menu Item",
+      "description": "Food item offered on Menu with recipe specification.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "category": { "type": "string" },
+        "price": { "type": "number" },
+        "prepSection": { "type": "string" },
+        "active": { "type": "boolean" },
+        "image": { "type": "string" },
+        "recipe": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "ingredientId": { "type": "string" },
+              "name": { "type": "string" },
+              "quantity": { "type": "number" },
+              "unit": { "type": "string" }
+            }
+          }
+        }
+      },
+      "required": ["name", "category", "price", "prepSection", "active", "recipe"]
+    },
+    "TableItem": {
+      "title": "Restaurant Table",
+      "description": "Physical table in dining area.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "number": { "type": "string" },
+        "status": { "type": "string", "enum": ["Empty", "Occupied"] },
+        "currentOrderId": { "type": "string" }
+      },
+      "required": ["number", "status"]
+    },
+    "RestaurantOrder": {
+      "title": "Restaurant Order",
+      "description": "POS sales invoice for food order.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "orderNumber": { "type": "string" },
+        "type": { "type": "string", "enum": ["Dine-in", "Takeaway", "Delivery"] },
+        "tableId": { "type": "string" },
+        "tableNumber": { "type": "string" },
+        "customerName": { "type": "string" },
+        "items": { "type": "array" },
+        "subtotal": { "type": "number" },
+        "tax": { "type": "number" },
+        "total": { "type": "number" },
+        "paymentMethod": { "type": "string" },
+        "paymentStatus": { "type": "string" },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "completedAt": { "type": "string" }
+      },
+      "required": ["orderNumber", "type", "items", "subtotal", "tax", "total", "paymentStatus", "status", "createdAt"]
+    },
+    "PurchaseInvoice": {
+      "title": "Purchase Invoice",
+      "description": "Procurement supplier invoice.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "invoiceNumber": { "type": "string" },
+        "supplierId": { "type": "string" },
+        "supplierName": { "type": "string" },
+        "date": { "type": "string" },
+        "totalAmount": { "type": "number" },
+        "paymentStatus": { "type": "string" },
+        "items": { "type": "array" }
+      },
+      "required": ["invoiceNumber", "supplierId", "supplierName", "date", "totalAmount", "paymentStatus", "items"]
+    },
+    "WasteLog": {
+      "title": "Waste Log",
+      "description": "Logs for spoiled or wasted food raw ingredients.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "ingredientId": { "type": "string" },
+        "name": { "type": "string" },
+        "quantity": { "type": "number" },
+        "unit": { "type": "string" },
+        "reason": { "type": "string" },
+        "loggedAt": { "type": "string" },
+        "cost": { "type": "number" }
+      },
+      "required": ["ingredientId", "name", "quantity", "unit", "reason", "loggedAt", "cost"]
+    }
+  },
+  "firestore": {
+    "/accounts/{accountId}": {
+      "schema": "Account",
+      "description": "Financial ledger accounts."
+    },
+    "/journalEntries/{entryId}": {
+      "schema": "JournalEntry",
+      "description": "Double-entry general journals."
+    },
+    "/suppliers/{supplierId}": {
+      "schema": "Supplier",
+      "description": "Suppliers register."
+    },
+    "/ingredients/{ingredientId}": {
+      "schema": "Ingredient",
+      "description": "Raw inventory ingredients."
+    },
+    "/menuItems/{menuItemId}": {
+      "schema": "MenuItem",
+      "description": "Restaurant menu items with recipes."
+    },
+    "/tables/{tableId}": {
+      "schema": "TableItem",
+      "description": "Dining tables details."
+    },
+    "/orders/{orderId}": {
+      "schema": "RestaurantOrder",
+      "description": "Cashier food sales orders."
+    },
+    "/purchaseInvoices/{invoiceId}": {
+      "schema": "PurchaseInvoice",
+      "description": "Inventory acquisition supplier bills."
+    },
+    "/wasteLogs/{wasteId}": {
+      "schema": "WasteLog",
+      "description": "Inventory spoilage logs."
+    }
+  }
+}
